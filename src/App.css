@@ -1,0 +1,113 @@
+.container {
+  padding-top: 30px;
+}
+
+/* Menu */
+.bg-light {
+  background-color: #228B22!important;
+}
+
+.navbar-light .navbar-brand {
+  color: #fff;
+}
+
+.custom-toggler.navbar-toggler {
+  border-color: rgb(255,102,203) !important;
+}
+
+#logout {
+  margin-right: 10px;
+}
+
+#logout i {
+  color: #fff;
+}
+
+/* Tables */
+
+.column {
+  width: 33.33%;
+}
+
+.column-4 {
+  width: 25%;
+}
+
+.summary-row td {
+  font-weight: 700;
+}
+
+/* Cards */
+.card {
+  margin-top: 20px;
+  width: 32rem;
+  background-color: #f8f8f8;
+}
+
+.card-body {
+  text-align: center;
+}
+
+.card-title {
+  text-align: center;
+  border: 1px solid #228B22;
+  padding: 0.5em
+}
+
+.card h6 {
+  text-align: center;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+/* Info */
+
+.info-div {
+  width: 50%;
+  margin: auto;
+}
+
+.info {
+  font-weight: 500;
+  font-size: 24px;
+  width: 100%;
+  color:#228B22;
+  text-align: center;
+}
+
+/* Highlight for summary information. */
+
+.highlight {
+  color: #228B22!important;
+}
+
+.point {
+  cursor: pointer;
+}
+
+/* Loader animation */ 
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #228B22 transparent #228B22 transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
