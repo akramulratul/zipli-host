@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 
-const URL = process.env.REACT_APP_API_URL || "https://json-s3t4.onrender.com";
+const URL = process.env.REACT_APP_API_URL || "https://json-s3t4.onrender.com/";
 
 function App() {
   const [user, setUser] = useState(null);
