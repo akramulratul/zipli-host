@@ -30,10 +30,23 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'build')));
 }
 
+// Helper function to read JSON files
+const readJsonFile = (filename) => {
+  try {
+    const filePath = path.join(__dirname, 'fakeapi', 'json_responses', filename);
+    console.log('Reading file from:', filePath); // Debug log
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading ${filename}:`, error);
+    throw error;
+  }
+};
+
 // API Routes
 app.post('/users', (req, res) => {
   try {
-    const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', 'user.json')));
+    const json = readJsonFile('user.json');
     res.json(json);
   } catch (error) {
     console.error('Error reading user.json:', error);
@@ -43,7 +56,7 @@ app.post('/users', (req, res) => {
 
 app.get('/climateimpactbysite/:siteId', (req, res) => {
   try {
-    const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', 'april.json')));
+    const json = readJsonFile('april.json');
     res.json(json);
   } catch (error) {
     console.error('Error reading climate impact data:', error);
@@ -66,7 +79,7 @@ app.get('/climateimpactbyuser/:userId', (req, res) => {
       fileName = 'april.json';
     }
 
-    const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', fileName)));
+    const json = readJsonFile(fileName);
     res.json(json);
   } catch (error) {
     console.error('Error reading climate impact data:', error);
@@ -86,6 +99,26 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
+// Debug endpoint to check available JSON files
+app.get('/debug/files', (req, res) => {
+  try {
+    const jsonDir = path.join(__dirname, 'fakeapi', 'json_responses');
+    const files = fs.readdirSync(jsonDir);
+    res.json({ files });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to read directory', details: error.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  // Log the current directory and available JSON files
+  console.log('Current directory:', __dirname);
+  try {
+    const jsonDir = path.join(__dirname, 'fakeapi', 'json_responses');
+    const files = fs.readdirSync(jsonDir);
+    console.log('Available JSON files:', files);
+  } catch (error) {
+    console.error('Error reading JSON directory:', error);
+  }
 }); 
