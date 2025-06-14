@@ -7,10 +7,23 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3001;
 
+// CORS configuration
+const corsOptions = {
+  origin: '*', // In production, replace with your actual frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
 
 // Serve static files from the React app in production
 if (process.env.NODE_ENV === 'production') {
@@ -19,32 +32,46 @@ if (process.env.NODE_ENV === 'production') {
 
 // API Routes
 app.post('/users', (req, res) => {
-  // Your existing user authentication logic
-  const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', 'user.json')));
-  res.json(json);
+  try {
+    const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', 'user.json')));
+    res.json(json);
+  } catch (error) {
+    console.error('Error reading user.json:', error);
+    res.status(500).json({ error: 'Failed to read user data' });
+  }
 });
 
 app.get('/climateimpactbysite/:siteId', (req, res) => {
-  const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', 'april.json')));
-  res.json(json);
+  try {
+    const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', 'april.json')));
+    res.json(json);
+  } catch (error) {
+    console.error('Error reading climate impact data:', error);
+    res.status(500).json({ error: 'Failed to read climate impact data' });
+  }
 });
 
 app.get('/climateimpactbyuser/:userId', (req, res) => {
-  const starts = new Date(req.query.startDate);
-  const ends = new Date(req.query.endDate);
-  const startMonth = starts.getMonth() + 1;
-  const endMonth = ends.getMonth() + 1;
+  try {
+    const starts = new Date(req.query.startDate);
+    const ends = new Date(req.query.endDate);
+    const startMonth = starts.getMonth() + 1;
+    const endMonth = ends.getMonth() + 1;
 
-  let fileName = '';
+    let fileName = '';
 
-  if (startMonth === 1 && endMonth === 12) {
-    fileName = 'current-year.json';
-  } else {
-    fileName = 'april.json';
+    if (startMonth === 1 && endMonth === 12) {
+      fileName = 'current-year.json';
+    } else {
+      fileName = 'april.json';
+    }
+
+    const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', fileName)));
+    res.json(json);
+  } catch (error) {
+    console.error('Error reading climate impact data:', error);
+    res.status(500).json({ error: 'Failed to read climate impact data' });
   }
-
-  const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'fakeapi', 'json_responses', fileName)));
-  res.json(json);
 });
 
 // Handle React routing in production
@@ -53,6 +80,11 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
   });
 }
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
